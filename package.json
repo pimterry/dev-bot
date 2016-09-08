@@ -1,0 +1,40 @@
+{
+  "name": "dev-bot",
+  "version": "0.1.0",
+  "description": "A framework for building chat-bot-based developer tooling",
+  "main": "index.js",
+  "bin": {
+    "dev-bot": "./cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pimterry/dev-bot.git"
+  },
+  "keywords": [
+    "bot",
+    "bots",
+    "github",
+    "lambda",
+    "framework",
+    "bot",
+    "framework",
+    "automation",
+    "tools"
+  ],
+  "author": "Tim Perry <pimterry@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pimterry/dev-bot/issues"
+  },
+  "homepage": "https://github.com/pimterry/dev-bot#readme",
+  "devDependencies": {
+    "typings": "^1.3.3"
+  },
+  "engines" : {
+    "node" : ">=4.4.5"
+  }
+}
