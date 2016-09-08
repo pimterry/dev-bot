@@ -7,9 +7,11 @@
     "dev-bot": "./dist/cli.js"
   },
   "scripts": {
+    "postinstall": "typings install",
+
     "build": "tsc",
     "test": "npm run build && mocha dist/test",
-    
+
     "prepublish": "npm run build"
   },
   "repository": {
