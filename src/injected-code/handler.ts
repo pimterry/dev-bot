@@ -3,7 +3,7 @@
  * all the Lambda interfacing and interactions with the dev platforms, and then call through to the
  * listeners they've defined.
  */
-import { LambdaHandler } from "./aws";
+import { LambdaHandler } from "../aws";
 
 export interface DevBotEntryPoint {
     // TODO: Insert all our entry point methods here, and their interfaces
@@ -14,4 +14,4 @@ let entryPoint = <DevBotEntryPoint> require(devBotConfig.entryPoint);
 
 console.log("DevBot handler running!");
 
-module.exports = entryPoint;
+module.exports = <LambdaHandler> entryPoint;

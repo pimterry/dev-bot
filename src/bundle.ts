@@ -37,10 +37,8 @@ export async function buildBundle(bundleSpec: BundleSpec): Promise<Zip> {
     let bundle = new Zip();
 
     await includeFolder(bundleSpec.rootDirectory, bundle);
+    await includeFolder(path.join(__dirname, "injected-code"), bundle);
 
-    // Inject our handler and the config to glue everything together
-    let handlerCode: string = await readFile(HANDLER_PATH, "utf8");
-    bundle.file("handler.js", handlerCode);
     bundle.file("dev-bot-bundle-config.json", JSON.stringify({
         entryPoint: bundleSpec.entryPoint
     }));
