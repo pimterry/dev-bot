@@ -1,7 +1,11 @@
 {
   "globalDependencies": {
+    "aws-lambda": "registry:dt/aws-lambda#0.0.0+20160906141158",
+    "fs-extra": "registry:dt/fs-extra#0.0.0+20160907105211",
+    "jszip": "registry:dt/jszip#0.0.0+20160709055933",
     "mocha": "registry:dt/mocha#2.2.5+20160720003353",
-    "node": "registry:dt/node#6.0.0+20160907173219"
+    "node": "registry:dt/node#6.0.0+20160907173219",
+    "temp": "registry:dt/temp#0.8.3+20160105142454"
   },
   "dependencies": {
     "chai": "registry:npm/chai#3.5.0+20160723033700"
