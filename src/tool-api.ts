@@ -1,5 +1,6 @@
+import AwsSdk = require("aws-sdk");
 import { buildBundle } from "./bundle";
-import { AwsCredentials, LambdaConfig, pushBundleToAws } from "./aws";
+import { AwsCredentials, LambdaConfig, AwsDeployer } from "./aws";
 
 export async function deploy(rootDirectory: string, // Absolute path to project
                              entryPoint: string, // Relative path in project to entrypoint
@@ -7,9 +8,11 @@ export async function deploy(rootDirectory: string, // Absolute path to project
                              region: string,
                              awsCredentials: AwsCredentials): Promise<void> {
     let bundle = await buildBundle({ rootDirectory, entryPoint });
-    await pushBundleToAws(bundle, {
+
+    let deployer = new AwsDeployer(AwsSdk, awsCredentials);
+    await deployer.deployLambdaBundle(bundle, {
         functionName,
         region,
         handler: "dev-bot-entrypoint.handler"
-    }, awsCredentials);
+    });
 }

@@ -2,11 +2,9 @@ import path = require("path");
 import temp = require("temp");
 temp.track();
 
-import chai = require("chai");
+import expect from "../expect";
 
-let expect = chai.expect;
-
-import { sleep, createDevBot, extractToDisk } from "./test-helpers";
+import { sleep, createDevBot, extractToDisk } from "../test-helpers";
 
 import { LambdaHandler } from "../../src/aws";
 import { buildBundle, BundleSpec } from "../../src/bundle";

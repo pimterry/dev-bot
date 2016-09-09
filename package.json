@@ -37,16 +37,19 @@
     "chai": "^3.5.0",
     "mocha": "^3.0.2",
     "rimraf": "^2.5.4",
+    "sinon": "^1.17.5",
+    "sinon-chai": "^2.8.0",
     "temp": "^0.8.3",
     "typescript": "^1.8.10",
     "typings": "^1.3.3"
   },
   "engines": {
-    "node": ">=4.4.5"
+    "node": ">=4.0.0"
   },
   "dependencies": {
     "es6-promisify": "^4.1.0",
     "fs-extra": "^0.30.0",
-    "jszip": "^3.1.2"
+    "jszip": "^3.1.2",
+    "node-aws-lambda": "^0.1.8"
   }
 }

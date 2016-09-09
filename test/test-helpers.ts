@@ -5,7 +5,7 @@ import Zip = require("jszip");
 import temp = require("temp");
 temp.track();
 
-import { BundleSpec } from "../../src/bundle";
+import { BundleSpec } from "../src/bundle";
 
 let outputFile = promisify<void, string, Buffer>(fs.outputFile);
 
