@@ -9,10 +9,10 @@ export async function deploy(rootDirectory: string, // Absolute path to project
                              awsCredentials: AwsCredentials): Promise<void> {
     let bundle = await buildBundle({ rootDirectory, entryPoint });
 
-    let deployer = new AwsDeployer(AwsSdk, awsCredentials);
+    let deployer = new AwsDeployer(AwsSdk);
     await deployer.deployLambdaBundle(bundle, {
         functionName,
         region,
-        handler: "dev-bot-entrypoint.handler"
-    });
+        handler: "dev-bot-handler.handler"
+    }, awsCredentials);
 }

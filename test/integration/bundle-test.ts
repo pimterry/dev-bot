@@ -15,7 +15,7 @@ export async function buildHandler(bundleSpec: BundleSpec): Promise<LambdaHandle
     let unbundleFolder = temp.mkdirSync("dev-bot-bundle");
     await extractToDisk(unbundleFolder, bundle);
 
-    let handlerPath = path.join(unbundleFolder, "handler.js");
+    let handlerPath = path.join(unbundleFolder, "dev-bot-handler.js");
 
     await sleep(10);
     return require(handlerPath);

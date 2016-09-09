@@ -13,11 +13,6 @@ describe("Aws deployer", () => {
 
     let deployer: AwsDeployer;
 
-    const credentials = {
-        accessKeyId: "access-key",
-        secretAccessKey: "secret-key"
-    }
-
     beforeEach(() => {
         lambda = {
             getFunction: sinon.stub(),
@@ -26,12 +21,20 @@ describe("Aws deployer", () => {
         awsStub = { Lambda: sinon.stub().returns(lambda) };
         bundle = { generateAsync: sinon.stub() };
 
-        deployer = new AwsDeployer(awsStub, credentials);
+        deployer = new AwsDeployer(awsStub);
     });
 
     it("authenticates with the given credentials", async () => {
+        deployer.deployLambdaBundle(bundle, <any> { }, {
+            accessKeyId: "test-access-key",
+            secretAccessKey: "test-secret-access-key"
+        });
+
         expect(awsStub.Lambda).to.have.been.calledWithMatch({
-            credentials: credentials
+            credentials: {
+                accessKeyId: "test-access-key",
+                secretAccessKey: "test-secret-access-key"
+            }
         })
     });
 
@@ -52,7 +55,7 @@ describe("Aws deployer", () => {
                 functionName: "test-function",
                 region: "eu-west-1",
                 handler: "handler.handler"
-            });
+            }, <any> {});
 
             expect(lambda.createFunction).to.have.been.calledWithMatch({
                 FunctionName: "test-function",
@@ -64,7 +67,7 @@ describe("Aws deployer", () => {
         });
 
         it("creates a new function with the given bundle", async () => {
-            await deployer.deployLambdaBundle(bundle, <any> {});
+            await deployer.deployLambdaBundle(bundle, <any> {}, <any> {});
 
             expect(lambda.createFunction).to.have.been.calledWithMatch({
                 Code: {
