@@ -2,6 +2,7 @@
   "globalDependencies": {
     "aws-lambda": "registry:dt/aws-lambda#0.0.0+20160906141158",
     "aws-sdk": "registry:dt/aws-sdk#0.0.0+20160908162406",
+    "docopt": "registry:dt/docopt#0.0.0+20160316155526",
     "fs-extra": "registry:dt/fs-extra#0.0.0+20160907105211",
     "jszip": "registry:dt/jszip#0.0.0+20160709055933",
     "mocha": "registry:dt/mocha#2.2.5+20160720003353",

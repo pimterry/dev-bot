@@ -4,7 +4,7 @@
   "description": "A framework for building chat-bot-based developer tooling",
   "main": "dist/index.js",
   "bin": {
-    "dev-bot": "./dist/cli.js"
+    "dev-bot": "./dist/src/cli/cli.js"
   },
   "scripts": {
     "postinstall": "typings install",
@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.6.0",
+    "docopt": "^0.6.2",
     "es6-promisify": "^4.1.0",
     "fs-extra": "^0.30.0",
     "jszip": "^3.1.2",

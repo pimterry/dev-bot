@@ -40,7 +40,11 @@ export interface PromisifiedLambda {
 export function promisifyLambda(lambda: AwsSdk.Lambda): PromisifiedLambda {
     let promisifiedLambda = {};
     for (let prop in lambda) {
-        promisifiedLambda[prop] = promisify(lambda[prop].bind(lambda));
+        if (lambda[prop].bind) {
+            promisifiedLambda[prop] = promisify(lambda[prop].bind(lambda));
+        } else {
+            promisifiedLambda[prop] = lambda[prop];
+        }
     }
     return <PromisifiedLambda> promisifiedLambda;
 }
