@@ -6,19 +6,16 @@
 import lambda = require("aws-lambda");
 import { LambdaHandler } from "../aws/lambda-deployer";
 
-export interface DevBotEntryPoint {
-    // TODO: Insert all our entry point methods here, and their interfaces
-}
-
+let devBot = require("dev-bot");
 let devBotConfig = require("./dev-bot-bundle-config.json");
 
 Object.assign(process.env, devBotConfig.env);
-let entryPoint = <DevBotEntryPoint> require(devBotConfig.entryPoint);
+let entryPoint = require(devBotConfig.entryPoint);
 
 exports.handler = <LambdaHandler> function handler(
     event: {},
     context: lambda.Context,
     callback: (err, data) => void
 ) {
-    callback(null, "Entrypoint is " + JSON.stringify(entryPoint));
+    devBot.runBot(entryPoint);
 }
