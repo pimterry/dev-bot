@@ -16,14 +16,14 @@ export enum CliAction {
 
 const doc = `
 Usage:
-    dev-bot aws-deploy <name> <entrypoint> [--region=<region>] [--role=<role_arn>] [--root=<root_directory>]
+    dev-bot aws-deploy <name> <entrypoint> [--region=<region>] [--role=<role_name>] [--root=<root_directory>]
     dev-bot -h | --help
 
 Options:
     -h, --help                Print this help message
 
     --region <region>         The AWS region to use [default: eu-west-1]
-    --role <role_arn>         The AWS role ARN to use [default: create one automatically]
+    --role <role_name>        The AWS role to use [default: create one automatically]
     --root <root_directory>   The bot's root directory [default: ./]
 `;
 

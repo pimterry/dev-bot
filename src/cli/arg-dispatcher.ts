@@ -17,8 +17,8 @@ export async function runCommand(args: CliArguments): Promise<void> {
             args.entrypoint,
             args.name,
             args.region,
-            args.role,
-            credentials
+            credentials,            
+            args.role
         );
     } else {
         throw new Error("Unrecognized CLI action");
