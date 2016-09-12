@@ -1,5 +1,5 @@
 import { CliArguments, CliAction } from "./arg-parsing";
-import { AwsCredentials } from "../aws";
+import { AwsCredentials } from "../aws/aws";
 
 import { deploy } from "./cli-api";
 
@@ -17,7 +17,7 @@ export async function runCommand(args: CliArguments): Promise<void> {
             args.entrypoint,
             args.name,
             args.region,
-            credentials,            
+            credentials,
             args.role
         );
     } else {

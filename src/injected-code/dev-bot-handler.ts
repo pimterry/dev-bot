@@ -4,7 +4,7 @@
  * listeners they've defined.
  */
 import lambda = require("aws-lambda");
-import { LambdaHandler } from "../aws";
+import { LambdaHandler } from "../aws/lambda-deployer";
 
 export interface DevBotEntryPoint {
     // TODO: Insert all our entry point methods here, and their interfaces

@@ -6,7 +6,7 @@ import expect from "../expect";
 
 import { sleep, createDevBot, extractToDisk } from "../test-helpers";
 
-import { LambdaHandler } from "../../src/aws";
+import { LambdaHandler } from "../../src/aws/lambda-deployer";
 import { buildBundle, BundleSpec } from "../../src/bundle";
 
 export async function buildHandler(bundleSpec: BundleSpec): Promise<LambdaHandler> {
