@@ -125,19 +125,17 @@ describe("AWS Role Creator", () => {
             });
         });
 
-        it("creates a role with a policy allowing just logging by default", async () => {
+        it("creates a role with a trust policy allowing lambda", async () => {
             await roleCreator.createRole("role-name", <any> { });
 
             let policy = JSON.parse(iam.createRole.args[0][0].AssumeRolePolicyDocument);
             expect(policy.Statement).to.deep.equal([
                 {
                     "Effect": "Allow",
-                    "Action": [
-                        "logs:CreateLogGroup",
-                        "logs:CreateLogStream",
-                        "logs:PutLogEvents"
-                    ],
-                    "Resource": "arn:aws:logs:*:*:*"
+                    "Principal": {
+                        "Service": "lambda.amazonaws.com"
+                    },
+                    "Action": "sts:AssumeRole"
                 }
             ]);
         });
@@ -153,11 +151,11 @@ describe("AWS Role Creator", () => {
 
     describe("if the role already exists", () => {
         beforeEach(() => {
-            iam.getRole.yields(null, { Arn: "arn" });
+            iam.getRole.yields(null, { Role: { Arn: "arn" } });
         });
 
         it("returns the ARN", async () => {
-            iam.getRole.yields(null, { Arn: "stub::arn/existing-result" });
+            iam.getRole.yields(null, { Role: { Arn: "stub::arn/existing-result" } });
 
             let result = await roleCreator.createRole("role-name", <any> { });
 

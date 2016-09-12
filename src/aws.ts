@@ -30,8 +30,8 @@ export class AwsRoleCreator {
 
     private async getRole(iam: PromisifiedIam, name: string): Promise<string> {
         try {
-            let existingRole = await iam.getRole({ RoleName: name });
-            return existingRole.Arn;
+            let response = await iam.getRole({ RoleName: name });
+            return response.Role.Arn;
         } catch (e) {
             if (e.statusCode === 404) return null;
             else throw e;
@@ -53,12 +53,10 @@ export class AwsRoleCreator {
                     "Statement": [
                         {
                             "Effect": "Allow",
-                            "Action": [
-                                "logs:CreateLogGroup",
-                                "logs:CreateLogStream",
-                                "logs:PutLogEvents"
-                            ],
-                            "Resource": "arn:aws:logs:*:*:*"
+                            "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
                         }
                     ]
                 })
