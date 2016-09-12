@@ -7,6 +7,7 @@ export interface CliArguments {
 
     region: string;
     root: string;
+    env?: string;
     role?: string;
 }
 
@@ -16,15 +17,17 @@ export enum CliAction {
 
 const doc = `
 Usage:
-    dev-bot aws-deploy <name> <entrypoint> [--region=<region>] [--role=<role_name>] [--root=<root_directory>]
+    dev-bot aws-deploy <name> <entrypoint> [--region=<region>] [--root=<root_directory>]
+                                           [--role=<role_name>] [--env=deploy.env]
     dev-bot -h | --help
 
 Options:
     -h, --help                Print this help message
 
     --region <region>         The AWS region to use [default: eu-west-1]
-    --role <role_name>        The AWS role to use [default: create one automatically]
     --root <root_directory>   The bot's root directory [default: ./]
+    --role <role_name>        The AWS role to use [default: create one automatically]
+    --env <env-vars-file>     A dotenv file, containing environmental variables to inject at runtime
 `;
 
 export function parseArgs(argv: string[]): CliArguments {
@@ -41,6 +44,7 @@ export function parseArgs(argv: string[]): CliArguments {
 
         root: result["--root"] || "./",
         region: result["--region"] || "eu-west-1",
+        env: result["--env"] || null,
         role: result["--role"] || null
     };
 }

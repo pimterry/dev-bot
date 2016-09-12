@@ -11,6 +11,8 @@ export interface DevBotEntryPoint {
 }
 
 let devBotConfig = require("./dev-bot-bundle-config.json");
+
+Object.assign(process.env, devBotConfig.env);
 let entryPoint = <DevBotEntryPoint> require(devBotConfig.entryPoint);
 
 exports.handler = <LambdaHandler> function handler(

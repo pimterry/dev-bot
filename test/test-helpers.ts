@@ -17,7 +17,8 @@ export function createDevBot(entryPointCode: string): BundleSpec {
     fs.writeFileSync(entryPoint, entryPointCode);
     return {
         rootDirectory: botFolder,
-        entryPoint
+        entryPoint,
+        env: {}
     };
 }
 

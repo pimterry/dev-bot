@@ -48,7 +48,8 @@ describe("Arg parsing", () => {
                 "bot.js",
                 "--region", "us-east-1a",
                 "--root", "./src",
-                "--role", "arn:aws:iam::account-id:role/role-name"
+                "--role", "arn:aws:iam::account-id:role/role-name",
+                "--env", "deploy-vars.env"
             ])));
 
             it("gets the bot name", () => {
@@ -69,6 +70,10 @@ describe("Arg parsing", () => {
 
             it("gets the role", () => {
                 expect(result.role).to.equal("arn:aws:iam::account-id:role/role-name");
+            });
+
+            it("gets the env file", () => {
+                expect(result.env).to.equal("deploy-vars.env");
             });
         });
     });

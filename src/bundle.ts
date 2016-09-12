@@ -10,6 +10,7 @@ const HANDLER_PATH = path.join(__dirname, "handler.js");
 export interface BundleSpec {
     rootDirectory: string;
     entryPoint: string;
+    env: { [id: string]: string };
 }
 
 async function includeFolder(folderPath: string, bundle: Zip): Promise<void> {
@@ -40,7 +41,8 @@ export async function buildBundle(bundleSpec: BundleSpec): Promise<Zip> {
     await includeFolder(path.join(__dirname, "injected-code"), bundle);
 
     bundle.file("dev-bot-bundle-config.json", JSON.stringify({
-        entryPoint: bundleSpec.entryPoint
+        entryPoint: bundleSpec.entryPoint,
+        env: bundleSpec.env
     }));
 
     return bundle;

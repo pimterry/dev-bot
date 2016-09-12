@@ -10,8 +10,9 @@ export async function deploy(rootDirectory: string, // Absolute path to project
                              functionName: string,
                              region: string,
                              awsCredentials: AwsCredentials,
-                             roleName: string = null): Promise<void> {
-    let bundle = await buildBundle({ rootDirectory, entryPoint });
+                             roleName: string = null,
+                             env: { [id: string]: string } = {}): Promise<void> {
+    let bundle = await buildBundle({ rootDirectory, entryPoint, env });
 
     let role = await roleCreator.createRole(roleName || DEFAULT_ROLE_NAME, awsCredentials);
 
