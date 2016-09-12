@@ -9,7 +9,7 @@
   "scripts": {
     "postinstall": "typings install",
     "build": "rimraf dist && tsc",
-    "test": "npm run build && mocha dist/test/**/*-test.js",
+    "test": "npm run build && mocha 'dist/test/**/*-test.js'",
     "prepublish": "npm run build"
   },
   "repository": {
