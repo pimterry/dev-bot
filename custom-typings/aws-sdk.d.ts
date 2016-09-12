@@ -30,6 +30,7 @@ declare module "aws-sdk" {
 
         putRule(params: CloudWatchEvents.PutRuleParams, callback: (err: AwsError, data: any) => void): void;
         putTargets(params: CloudWatchEvents.PutTargetsParams, callback: (err: AwsError, data: any) => void): void;
+        listRuleNamesByTarget(params: CloudWatchEvents.ListRuleNamesByTargetParams, callback: (err: AwsError, data: any) => void): void;
     }
 
     export module CloudWatchEvents {
@@ -50,6 +51,12 @@ declare module "aws-sdk" {
                 Input?: string;
                 InputPath?: string;
             }[]
+        }
+
+        export interface ListRuleNamesByTargetParams {
+            TargetArn: string;
+            Limit?: number;
+            NextToken?: string;
         }
     }
 }

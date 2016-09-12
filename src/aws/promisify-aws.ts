@@ -46,6 +46,7 @@ export interface PromisifiedIam {
 export interface PromisifiedCloudWatchEvents {
     putRule(params: AwsSdk.CloudWatchEvents.PutRuleParams): Promise<any>;
     putTargets(params: AwsSdk.CloudWatchEvents.PutTargetsParams): Promise<any>;
+    listRuleNamesByTarget(params: AwsSdk.CloudWatchEvents.ListRuleNamesByTargetParams): Promise<any>;
 }
 
 function boundPromisify<T>(input: {}): T {
