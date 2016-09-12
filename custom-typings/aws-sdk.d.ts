@@ -4,6 +4,7 @@ declare module "aws-sdk" {
 
         getRole(params: IAM.GetRoleParams, callback: (err: AwsError, data: any) => void): void;
         createRole(params: IAM.CreateRoleParams, callback: (err: AwsError, data: any) => void): void;
+        putRolePolicy(params: IAM.PutRolePolicyParams, callback: (err: AwsError, data: any) => void): void;
     }
 
     export module IAM {
@@ -15,6 +16,12 @@ declare module "aws-sdk" {
             RoleName: string;
             AssumeRolePolicyDocument: string;
             Path?: string;
+        }
+
+        export interface PutRolePolicyParams {
+            RoleName: string;
+            PolicyName: string;
+            PolicyDocument: string;
         }
     }
 }

@@ -47,22 +47,38 @@ export class AwsRoleCreator {
 
         if (existingRole) return existingRole;
         else {
-            let result = await iam.createRole({
+            let createRoleResult = await iam.createRole({
                 RoleName: name,
                 AssumeRolePolicyDocument: JSON.stringify({
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Principal": {
-                                "Service": "lambda.amazonaws.com"
-                            },
-                            "Action": "sts:AssumeRole"
-                        }
-                    ]
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }]
                 })
             });
 
-            return result.Arn;
+            let roleArn = createRoleResult.Arn;
+
+            await iam.putRolePolicy({
+                RoleName: name,
+                PolicyName: "default-dev-bot-policy",
+                PolicyDocument: JSON.stringify({
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Action": [
+                            "logs:CreateLogGroup",
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents"
+                        ],
+                        "Resource": "arn:aws:logs:*:*:*"
+                    }]
+                })
+            });
+
+            return roleArn;
         }
     }
 }

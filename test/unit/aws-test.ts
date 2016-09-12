@@ -89,7 +89,8 @@ describe("AWS Role Creator", () => {
     beforeEach(() => {
         iam = {
             createRole: sinon.stub(),
-            getRole: sinon.stub()
+            getRole: sinon.stub(),
+            putRolePolicy: sinon.stub()
         };
         awsStub = { IAM: sinon.stub().returns(iam) };
 
@@ -114,6 +115,7 @@ describe("AWS Role Creator", () => {
         beforeEach(() => {
             iam.getRole.yields({statusCode: 404});
             iam.createRole.yields(null, { });
+            iam.putRolePolicy.yields(null, { });
         });
 
         it("creates a role with the given name", async () => {
@@ -146,6 +148,23 @@ describe("AWS Role Creator", () => {
             let result = await roleCreator.createRole("role-name", <any> { });
 
             expect(result).to.equal("stub::arn/result");
+        });
+
+        it("includes an inline policy allowing basic logging for the role", async () => {
+            await roleCreator.createRole("role-name", <any> { });
+
+            let policy = JSON.parse(iam.putRolePolicy.args[0][0].PolicyDocument);
+            expect(policy.Statement).to.deep.equal([
+                {
+                    "Effect": "Allow",
+                    "Action": [
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents"
+                    ],
+                    "Resource": "arn:aws:logs:*:*:*"
+                }
+            ]);
         });
     });
 

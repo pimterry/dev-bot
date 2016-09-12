@@ -40,6 +40,7 @@ export interface PromisifiedLambda {
 export interface PromisifiedIam {
     getRole(params: AwsSdk.IAM.GetRoleParams): Promise<any>;
     createRole(params: AwsSdk.IAM.CreateRoleParams): Promise<any>;
+    putRolePolicy(params: AwsSdk.IAM.PutRolePolicyParams): Promise<any>;
 }
 
 function boundPromisify<T>(input: {}): T {
