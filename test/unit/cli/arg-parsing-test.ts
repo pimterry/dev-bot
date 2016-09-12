@@ -2,7 +2,7 @@ import expect from "../../expect";
 
 import { CliArguments, CliAction, parseArgs } from "../../../src/cli/arg-parsing";
 
-function args(...args: string[]): string[] {
+function args(args: string[]): string[] {
     return [
         "/usr/local/bin/node",
         "/qwe/asd/def/node_modules/bin/dev-bot"
@@ -13,7 +13,7 @@ describe("Arg parsing", () => {
     describe("for 'deploy'", () => {
         describe("when providing only the required arguments", () => {
             let result: CliArguments;
-            beforeEach(() => result = parseArgs(args("aws-deploy", "my-bot", "bot.js")));
+            beforeEach(() => result = parseArgs(args(["aws-deploy", "my-bot", "bot.js"])));
 
             it("sets the action to 'deploy", () => {
                 expect(result.action).to.equal(CliAction.AwsDeploy);
@@ -42,14 +42,14 @@ describe("Arg parsing", () => {
 
         describe("when providing optional arguments", () => {
             let result: CliArguments;
-            beforeEach(() => result = parseArgs(args(
+            beforeEach(() => result = parseArgs(args([
                 "aws-deploy",
                 "my-bot",
                 "bot.js",
                 "--region", "us-east-1a",
                 "--root", "./src",
                 "--role", "arn:aws:iam::account-id:role/role-name"
-            )));
+            ])));
 
             it("gets the bot name", () => {
                 expect(result.name).to.equal("my-bot");
