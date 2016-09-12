@@ -37,14 +37,22 @@ export interface PromisifiedLambda {
     updateFunctionConfiguration(params: AwsSdk.Lambda.UpdateFunctionConfigurationParams): Promise<void>;
 }
 
-export function promisifyLambda(lambda: AwsSdk.Lambda): PromisifiedLambda {
-    let promisifiedLambda = {};
-    for (let prop in lambda) {
-        if (lambda[prop].bind) {
-            promisifiedLambda[prop] = promisify(lambda[prop].bind(lambda));
+export interface PromisifiedIam {
+    getRole(params: AwsSdk.IAM.GetRoleParams): Promise<any>;
+    createRole(params: AwsSdk.IAM.CreateRoleParams): Promise<any>;
+}
+
+function boundPromisify<T>(input: {}): T {
+    let output = {};
+    for (let prop in input) {
+        if (input[prop].bind) {
+            output[prop] = promisify(input[prop].bind(input));
         } else {
-            promisifiedLambda[prop] = lambda[prop];
+            output[prop] = input[prop];
         }
     }
-    return <PromisifiedLambda> promisifiedLambda;
+    return <T> output;
 }
+
+export var promisifyLambda = <(lambda: AwsSdk.Lambda) => PromisifiedLambda> boundPromisify;
+export var promisifyIam = <(iam: AwsSdk.IAM) => PromisifiedIam> boundPromisify;

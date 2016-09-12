@@ -2,7 +2,10 @@ import promisify = require("es6-promisify");
 import Zip = require("jszip");
 import AwsSdk = require("aws-sdk");
 import AwsLambda = require("aws-lambda");
-import { promisifyLambda, PromisifiedLambda } from "./promisify-lambda";
+import {
+    promisifyLambda, PromisifiedLambda,
+    promisifyIam, PromisifiedIam
+} from "./promisify-aws";
 
 export interface AwsCredentials {
     accessKeyId: string;
@@ -22,14 +25,56 @@ export interface LambdaHandler {
      callback?: (err: Error, data: {}) => void): void;
 }
 
+export class AwsRoleCreator {
+    constructor(private aws: (typeof AwsSdk)) {}
+
+    private async getRole(iam: PromisifiedIam, name: string): Promise<string> {
+        try {
+            let existingRole = await iam.getRole({ RoleName: name });
+            return existingRole.Arn;
+        } catch (e) {
+            if (e.statusCode === 404) return null;
+            else throw e;
+        }
+    }
+
+    async createRole(name: string, awsCredentials: AwsCredentials): Promise<string> {
+        let iam = promisifyIam(new this.aws.IAM({
+            credentials: awsCredentials
+        }));
+
+        let existingRole = await this.getRole(iam, name);
+
+        if (existingRole) return existingRole;
+        else {
+            let result = await iam.createRole({
+                RoleName: name,
+                AssumeRolePolicyDocument: JSON.stringify({
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "logs:CreateLogGroup",
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            "Resource": "arn:aws:logs:*:*:*"
+                        }
+                    ]
+                })
+            });
+
+            return result.Arn;
+        }
+    }
+}
+
 export class AwsDeployer {
     constructor(private aws: (typeof AwsSdk)) { }
 
-    async doesFunctionExist(lambda: PromisifiedLambda, name: string): Promise<boolean> {
+    private async doesFunctionExist(lambda: PromisifiedLambda, name: string): Promise<boolean> {
         try {
-            await lambda.getFunction({
-                FunctionName: name
-            });
+            await lambda.getFunction({ FunctionName: name });
             return true;
         } catch (e) {
             if (e.statusCode === 404) return false;
