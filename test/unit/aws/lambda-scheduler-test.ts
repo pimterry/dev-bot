@@ -32,7 +32,7 @@ describe("Lambda scheduler", () => {
     });
 
     it("authenticates with the given credentials", async () => {
-        scheduler.scheduleLambda("lambda-name", {
+        scheduler.scheduleLambda("lambda-name", "eu-west-1", {
             accessKeyId: "test-access-key",
             secretAccessKey: "test-secret-access-key"
         });
@@ -59,7 +59,7 @@ describe("Lambda scheduler", () => {
             }));
 
             it("creates a new rule", async () => {
-                await scheduler.scheduleLambda("arn:my-lambda", <any> {});
+                await scheduler.scheduleLambda("arn:my-lambda", "eu-west-1", <any> {});
 
                 expect(events.putRule).to.have.been.calledOnce;
                 expect(events.putRule).to.have.been.calledWithMatch({
@@ -71,11 +71,11 @@ describe("Lambda scheduler", () => {
             it("sets the new rule to trigger the lambda", async () => {
                 events.putRule.yields(null, { RuleArn: "arn:newly-created-rule" });
 
-                await scheduler.scheduleLambda("arn:my-lambda", <any> {});
+                await scheduler.scheduleLambda("arn:my-lambda", "eu-west-1", <any> {});
 
                 expect(events.putTargets).to.have.been.calledOnce;
                 expect(events.putTargets).to.have.been.calledWithMatch({
-                    Rule: "arn:newly-created-rule",
+                    Rule: "dev-bot-trigger-my-lambda",
                     Targets: [{
                         Id: "dev-bot-target-my-lambda",
                         Arn: "arn:my-lambda"
@@ -86,15 +86,15 @@ describe("Lambda scheduler", () => {
             it("adds permissions to the lambda to allow triggering", async () => {
                 events.putRule.yields(null, { RuleArn: "arn:newly-created-rule" });
 
-                await scheduler.scheduleLambda("arn:my-lambda", <any> {});
+                await scheduler.scheduleLambda("arn:my-lambda", "eu-west-1", <any> {});
 
                 expect(lambda.addPermission).to.have.been.calledOnce;
                 expect(lambda.addPermission).to.have.been.calledWithMatch({
-                    Action: "lambda.InvokeFunction",
+                    Action: "lambda:InvokeFunction",
                     FunctionName: "arn:my-lambda",
                     Principal: "events.amazonaws.com",
                     SourceArn: "arn:newly-created-rule",
-                    StatementId: "1"
+                    StatementId: sinon.match(/dev-bot-stmt-\d+$/)
                 });
             });
         });
@@ -105,7 +105,7 @@ describe("Lambda scheduler", () => {
             }));
 
             it("does nothing", async () => {
-                await scheduler.scheduleLambda("arn:my-lambda", <any> {});
+                await scheduler.scheduleLambda("arn:my-lambda", "eu-west-1", <any> {});
 
                 expect(events.putRule).not.to.have.been.called;
                 expect(events.putTargets).not.to.have.been.called;

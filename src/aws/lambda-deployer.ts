@@ -31,7 +31,7 @@ export default class LambdaDeployer {
         }
     }
 
-    async deployLambdaBundle(bundle: Zip, lambdaConfig: LambdaConfig, awsCredentials: AwsCredentials): Promise<void> {
+    async deployLambdaBundle(bundle: Zip, lambdaConfig: LambdaConfig, awsCredentials: AwsCredentials): Promise<string> {
         let lambda = promisifyLambda(new this.aws.Lambda({
             credentials: awsCredentials,
             region: lambdaConfig.region
@@ -41,13 +41,14 @@ export default class LambdaDeployer {
         let code = await bundle.generateAsync({type: "nodebuffer"});
 
         if (await this.doesFunctionExist(lambda, name)) {
-            await lambda.updateFunctionCode({
+            let response = await lambda.updateFunctionCode({
                 FunctionName: name,
                 ZipFile: code
             });
+            return response.FunctionArn;
             // Note that we *never* update lambda params - only the code.
         } else {
-            await lambda.createFunction({
+            let response = await lambda.createFunction({
                 FunctionName: name,
                 Handler: lambdaConfig.handler,
                 Publish: true,
@@ -58,6 +59,8 @@ export default class LambdaDeployer {
                     ZipFile: code
                 }
             });
+
+            return response.FunctionArn;
         }
     }
 }

@@ -6,9 +6,9 @@ import { promisifyEvents, promisifyLambda } from "./promisify-aws";
 export default class LambdaScheduler {
     constructor(private aws: (typeof AwsSdk)) { }
 
-    async scheduleLambda(lambdaArn: string, credentials: AwsCredentials) {
-        let events = promisifyEvents(new this.aws.CloudWatchEvents({ credentials }));
-        let lambda = promisifyLambda(new this.aws.Lambda({ credentials }));
+    async scheduleLambda(lambdaArn: string, region: string, credentials: AwsCredentials) {
+        let events = promisifyEvents(new this.aws.CloudWatchEvents({ credentials, region }));
+        let lambda = promisifyLambda(new this.aws.Lambda({ credentials, region }));
 
         let name = lambdaArn.split(":").slice(-1)[0];
 
@@ -21,15 +21,15 @@ export default class LambdaScheduler {
         });
 
         await lambda.addPermission({
-            Action: "lambda.InvokeFunction",
+            Action: "lambda:InvokeFunction",
             FunctionName: lambdaArn,
             Principal: "events.amazonaws.com",
             SourceArn: rule.RuleArn,
-            StatementId: "1"
+            StatementId: `dev-bot-stmt-${Date.now()}`
         });
 
         await events.putTargets({
-            Rule: rule.RuleArn,
+            Rule: `dev-bot-trigger-${name}`,
             Targets: [{
                 Id: `dev-bot-target-${name}`,
                 Arn: lambdaArn

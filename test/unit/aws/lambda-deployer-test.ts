@@ -15,8 +15,8 @@ describe("Lambda deployer", () => {
 
     beforeEach(() => {
         lambda = {
-            getFunction: sinon.stub(),
-            createFunction: sinon.stub()
+            getFunction: sinon.stub().yields(null, {}),
+            createFunction: sinon.stub().yields(null, {})
         };
         awsStub = { Lambda: sinon.stub().returns(lambda) };
         bundle = { generateAsync: sinon.stub() };
@@ -43,7 +43,7 @@ describe("Lambda deployer", () => {
 
         beforeEach(() => {
             lambda.getFunction.yields({statusCode: 404});
-            lambda.createFunction.yields();
+            lambda.createFunction.yields(null, { FunctionArn: "new:lambda:arn" });
 
             bundle.generateAsync.returns(
                 Promise.resolve(Buffer.from(bundleData, "utf8"))
@@ -76,6 +76,12 @@ describe("Lambda deployer", () => {
                     ZipFile: Buffer.from(bundleData)
                 }
             });
+        });
+
+        it("returns the ARN of the created function", async () => {
+            let result = await deployer.deployLambdaBundle(bundle, <any> {}, <any> {});
+
+            expect(result).to.equal("new:lambda:arn");
         });
     });
 });

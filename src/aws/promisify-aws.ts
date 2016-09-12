@@ -12,29 +12,29 @@ import promisify = require("es6-promisify");
 // Taken straight from DefinitelyTyped's AWS Lambda class definition, transformed to Promises.
 export interface PromisifiedLambda {
     endpoint: AwsSdk.Endpoint;
-    addPermission(params: AwsSdk.Lambda.AddPermissionParams): Promise<void>;
-    createAlias(params: AwsSdk.Lambda.CreateAliasParams): Promise<void>;
-    createEventSourceMapping(params: AwsSdk.Lambda.CreateEventSourceMappingParams): Promise<void>;
-    createFunction(params: AwsSdk.Lambda.CreateFunctionParams): Promise<void>;
-    deleteAlias(params: AwsSdk.Lambda.DeleteAliasParams): Promise<void>;
-    deleteEventSourceMapping(params: AwsSdk.Lambda.DeleteEventSourceMappingParams): Promise<void>;
-    deleteFunction(params: AwsSdk.Lambda.DeleteFunctionParams): Promise<void>;
-    getAlias(params: AwsSdk.Lambda.GetAliasParams): Promise<void>;
-    getEventSourceMapping(params: AwsSdk.Lambda.GetEventSourceMappingParams): Promise<void>;
-    getFunction(params: AwsSdk.Lambda.GetFunctionParams): Promise<void>;
-    getFunctionConfiguration(params: AwsSdk.Lambda.GetFunctionConfigurationParams): Promise<void>;
-    getPolicy(params: AwsSdk.Lambda.GetPolicyParams): Promise<void>;
-    invoke(params: AwsSdk.Lambda.InvokeParams): Promise<void>;
-    listAliases(params: AwsSdk.Lambda.ListAliasesParams): Promise<void>;
-    listEventSourceMappings(params: AwsSdk.Lambda.ListEventSourceMappingsParams): Promise<void>;
-    listFunctions(params: AwsSdk.Lambda.ListFunctionsParams): Promise<void>;
-    listVersionsByFunction(params: AwsSdk.Lambda.ListVersionsByFunctionParams): Promise<void>;
-    publishVersion(params: AwsSdk.Lambda.PublishVersionParams): Promise<void>;
-    removePermission(params: AwsSdk.Lambda.RemovePermissionParams): Promise<void>;
-    updateAlias(params: AwsSdk.Lambda.UpdateAliasParams): Promise<void>;
-    updateEventSourceMapping(params: AwsSdk.Lambda.UpdateEventSourceMappingParams): Promise<void>;
-    updateFunctionCode(params: AwsSdk.Lambda.UpdateFunctionCodeParams): Promise<void>;
-    updateFunctionConfiguration(params: AwsSdk.Lambda.UpdateFunctionConfigurationParams): Promise<void>;
+    addPermission(params: AwsSdk.Lambda.AddPermissionParams): Promise<any>;
+    createAlias(params: AwsSdk.Lambda.CreateAliasParams): Promise<any>;
+    createEventSourceMapping(params: AwsSdk.Lambda.CreateEventSourceMappingParams): Promise<any>;
+    createFunction(params: AwsSdk.Lambda.CreateFunctionParams): Promise<any>;
+    deleteAlias(params: AwsSdk.Lambda.DeleteAliasParams): Promise<any>;
+    deleteEventSourceMapping(params: AwsSdk.Lambda.DeleteEventSourceMappingParams): Promise<any>;
+    deleteFunction(params: AwsSdk.Lambda.DeleteFunctionParams): Promise<any>;
+    getAlias(params: AwsSdk.Lambda.GetAliasParams): Promise<any>;
+    getEventSourceMapping(params: AwsSdk.Lambda.GetEventSourceMappingParams): Promise<any>;
+    getFunction(params: AwsSdk.Lambda.GetFunctionParams): Promise<any>;
+    getFunctionConfiguration(params: AwsSdk.Lambda.GetFunctionConfigurationParams): Promise<any>;
+    getPolicy(params: AwsSdk.Lambda.GetPolicyParams): Promise<any>;
+    invoke(params: AwsSdk.Lambda.InvokeParams): Promise<any>;
+    listAliases(params: AwsSdk.Lambda.ListAliasesParams): Promise<any>;
+    listEventSourceMappings(params: AwsSdk.Lambda.ListEventSourceMappingsParams): Promise<any>;
+    listFunctions(params: AwsSdk.Lambda.ListFunctionsParams): Promise<any>;
+    listVersionsByFunction(params: AwsSdk.Lambda.ListVersionsByFunctionParams): Promise<any>;
+    publishVersion(params: AwsSdk.Lambda.PublishVersionParams): Promise<any>;
+    removePermission(params: AwsSdk.Lambda.RemovePermissionParams): Promise<any>;
+    updateAlias(params: AwsSdk.Lambda.UpdateAliasParams): Promise<any>;
+    updateEventSourceMapping(params: AwsSdk.Lambda.UpdateEventSourceMappingParams): Promise<any>;
+    updateFunctionCode(params: AwsSdk.Lambda.UpdateFunctionCodeParams): Promise<any>;
+    updateFunctionConfiguration(params: AwsSdk.Lambda.UpdateFunctionConfigurationParams): Promise<any>;
 }
 
 export interface PromisifiedIam {

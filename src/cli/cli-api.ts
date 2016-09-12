@@ -15,10 +15,12 @@ export async function deploy(rootDirectory: string, // Absolute path to project
 
     let role = await roleCreator.createRole(roleName || DEFAULT_ROLE_NAME, awsCredentials);
 
-    await lambdaDeployer.deployLambdaBundle(bundle, {
+    let lambdaArn = await lambdaDeployer.deployLambdaBundle(bundle, {
         functionName,
         region,
         handler: "dev-bot-handler.handler",
         role
     }, awsCredentials);
+
+    await lambdaScheduler.scheduleLambda(lambdaArn, region, awsCredentials);
 }
