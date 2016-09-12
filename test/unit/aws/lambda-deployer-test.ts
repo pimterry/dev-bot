@@ -6,7 +6,7 @@ import expect from "../../expect";
 
 import LambdaDeployer from "../../../src/aws/lambda-deployer";
 
-describe("Aws deployer", () => {
+describe("Lambda deployer", () => {
     let awsStub: any;
     let lambda: any;
     let bundle: any;

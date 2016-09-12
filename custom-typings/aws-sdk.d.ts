@@ -24,4 +24,32 @@ declare module "aws-sdk" {
             PolicyDocument: string;
         }
     }
+
+    export class CloudWatchEvents {
+        constructor(options?: any);
+
+        putRule(params: CloudWatchEvents.PutRuleParams, callback: (err: AwsError, data: any) => void): void;
+        putTargets(params: CloudWatchEvents.PutTargetsParams, callback: (err: AwsError, data: any) => void): void;
+    }
+
+    export module CloudWatchEvents {
+        export interface PutRuleParams {
+            Name: string;
+            Description?: string;
+            EventPattern?: string;
+            ScheduleExpression?: string;
+            RoleArn?: string;
+            State?: "ENABLED"|"DISABLED";
+        }
+
+        export interface PutTargetsParams {
+            Rule: string;
+            Targets: {
+                Arn: string;
+                Id: string;
+                Input?: string;
+                InputPath?: string;
+            }[]
+        }
+    }
 }

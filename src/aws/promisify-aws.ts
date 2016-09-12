@@ -43,6 +43,11 @@ export interface PromisifiedIam {
     putRolePolicy(params: AwsSdk.IAM.PutRolePolicyParams): Promise<any>;
 }
 
+export interface PromisifiedCloudWatchEvents {
+    putRule(params: AwsSdk.CloudWatchEvents.PutRuleParams): Promise<any>;
+    putTargets(params: AwsSdk.CloudWatchEvents.PutTargetsParams): Promise<any>;
+}
+
 function boundPromisify<T>(input: {}): T {
     let output = {};
     for (let prop in input) {
@@ -55,5 +60,6 @@ function boundPromisify<T>(input: {}): T {
     return <T> output;
 }
 
+export var promisifyEvents = <(lambda: AwsSdk.CloudWatchEvents) => PromisifiedCloudWatchEvents> boundPromisify;
 export var promisifyLambda = <(lambda: AwsSdk.Lambda) => PromisifiedLambda> boundPromisify;
 export var promisifyIam = <(iam: AwsSdk.IAM) => PromisifiedIam> boundPromisify;

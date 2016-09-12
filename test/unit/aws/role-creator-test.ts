@@ -5,7 +5,7 @@ import expect from "../../expect";
 
 import RoleCreator from "../../../src/aws/role-creator";
 
-describe("AWS Role Creator", () => {
+describe("Role Creator", () => {
     let awsStub: any;
     let iam: any;
 
