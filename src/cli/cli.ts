@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { runCommand } from "./arg-dispatcher";
 import { parseArgs } from "./arg-parsing"
 
