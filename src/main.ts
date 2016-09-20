@@ -1,4 +1,5 @@
-import github = require("github");
+import GithubApi = require("github");
+let github = GithubApi();
 
 interface GithubAuthParams {
     type: "oauth";
@@ -18,7 +19,7 @@ export interface DevBotEntryPoint {
 }
 
 export async function runBot(bot: DevBotEntryPoint) {
-    let notifications = await github.activity.getNotifications()
+    let notifications = await github.activity.getNotifications({});
 
     if (notifications.length > 0) {
         let issueMentions = notifications.filter((notification) => {
