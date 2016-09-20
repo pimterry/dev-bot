@@ -4,10 +4,9 @@
   "description": "A framework for building chat-bot-based developer tooling",
   "main": "dist/src/main.js",
   "scripts": {
-    "postinstall": "typings install",
     "build": "rimraf dist/* && tsc",
     "test": "npm run build && mocha 'dist/test/**/*-test.js'",
-    "prepublish": "npm run build"
+    "prepublish": "typings install && npm run build"
   },
   "repository": {
     "type": "git",
