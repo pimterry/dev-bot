@@ -10,17 +10,16 @@ For a lot of us, our interactions within tools like Github are closely related t
 
 This has a big scope! Right now though, it's focused on a certain specific niche within this:
 
-* Self-hosting your bots on AWS Lambda.
 * Interacting with your bots on Github.
 * Writing your bots in Node.
 
-In future it'd be great to expand the available hosts (to other lambda equivalents especially) and platforms (to Pivotal Tracker, Jira, Bitbucket, and Gerrit, more traditional chat platforms like Slack, and anywhere else developers interact with their code) and languages (suggestions welcome! Python?). One step at a time though.
+In future it'd be great to expand the platforms (to Pivotal Tracker, Jira, Bitbucket, and Gerrit, more traditional chat platforms like Slack, and anywhere else developers interact with their code) and languages (suggestions welcome! Python?). One step at a time though.
 
 ## Get Started
 
 *This doesn't all work yet - this is the plan*.
 
-DevBot handles all the deployment and platform integration for you. What you need to do is expose an interface for the events you'd like to handle (mentions, pull requests, etc), do whatever you'd like to do (either with standard libraries or using DevBot's API for actions like replying on a comment thread), use the DevBot CLI tool to test your bot locally, or to push it to AWS.
+DevBot handles all the platform integration for you, and the [DevBot tool](https://github.com/pimterry/dev-bot-tool) handles all the deployment and hosting integration. All you need to do is expose an interface for the events you'd like to handle (mentions, pull requests, etc), run whatever code you'd like (either with standard libraries or using DevBot's API for actions like replying on a comment thread), and use the DevBot CLI tool to test your bot locally or to push it to AWS (or run it yourself, of course).
 
 First you need to install DevBot:
 
@@ -28,7 +27,7 @@ First you need to install DevBot:
 npm install --save dev-bot
 ```
 
-*(You'll also want 'jokes', if you want to run the below example).*
+*(If you want to run the entire example below, you'll also want 'jokes').*
 
 You then need to write a bot that connects to a platform, and responds to some events. Let's walk through an example bot (see the full source at https://github.com/jokebot/jokebot) that responds to Github @mentions with jokes:
 
@@ -50,22 +49,18 @@ Feel free to @jokebot on an issue on the [jokebot repo](https://github.com/jokeb
 
 First, we do some standard require()ing, then we set up Github with our credentials, and then we provide a handler for mentions. That handler is given the data for the mention, but we don't even need that here, we just use the second argument (a callback you can use to easily reply directly to your mention), and pass it a joke from our joke source. That's the lot.
 
-To actually deploy this, you'll need an AWS account, and your AWS credentials in the environment. For a larger project you'll want to create a .env file in your repo (**remember to .gitignore it!**) and `source .env` before your commands, but to test this you can just run:
+To actually deploy this, you'll need AWS credentials available, and the DevBot tool installed (`npm install --save-dev dev-bot-tool`). See the tool's [full readme](https://github.com/pimterry/dev-bot-tool/blob/master/README.md) for more information. For a larger project you'll want to create a .env file in your repo (**remember to .gitignore it!**) to hold your AWS credentials, and load them with `source .env` before your commands, but to test this you can just run:
 
 ```bash
 export AWS_ACCESS_KEY_ID=AAAAAAAAAAAAAA
 export AWS_SECRET_ACCESS_KEY=BBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 
-dev-bot aws-deploy --name jokebot --region eu-west-1 index.js
+dev-bot aws-deploy --name jokebot index.js
 ```
 
 Note that the above will only work with `dev-bot` in your path. You can install it globally, but typically instead I install it locally in my bots, and run the above from NPM scripts (which automatically include ./node_modules/bin to their path, where DevBot puts its CLI client). See JokeBot's [package.json](https://github.com/jokebot/jokebot/blob/master/package.json) for an example of this all put together.
 
-That's it! Do whatever you like inside onMention, and see it called every time somebody pings you (with a short delay: see caveats below)
-
-## API
-
-TODO
+That's it! Do whatever you like inside onMention, and see it called every time somebody pings you (with a short delay: see [caveats](#caveats) below).
 
 ## Caveats
 
