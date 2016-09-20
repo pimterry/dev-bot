@@ -1,0 +1,5 @@
+test/
+.travis.yml
+tsconfig.json
+wallaby.js
+*.env
