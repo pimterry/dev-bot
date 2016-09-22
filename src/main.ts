@@ -1,3 +1,4 @@
+import moment = require("moment");
 import GithubApi = require("github");
 let github = GithubApi();
 
@@ -11,37 +12,99 @@ export function connectGithub(params: GithubAuthParams) {
 }
 
 export interface DevBotMention {
-    url: string;
+    user: string,
+    body: string,
+    created_at: string,
+
+    id: number
+    url: string
+}
+
+export interface DevBotMentionContext {
+    comments: {
+        id: number,
+        user: { login: string },
+        body: string,
+        url: string,
+        created_at: string
+    }[],
+
+    id: number,
+    repo: {
+        user: string,
+        name: string,
+    },
+    url: string
 }
 
 export interface DevBotEntryPoint {
-    onMention(mention: DevBotMention, respondCallback: (response: string) => Promise<void>): void;
+    onMention(mention: DevBotMention,
+              context: DevBotMentionContext,
+              respondCallback: (response: string) => Promise<void>): void;
 }
 
-export async function runBot(bot: DevBotEntryPoint) {
-    let notifications = await github.activity.getNotifications({});
+export async function runBot(bot: DevBotEntryPoint): Promise<void> {
+    let notifications = await github.activity.getNotifications({
+        participating: true
+    });
 
-    if (notifications.length > 0) {
-        let issueMentions = notifications.filter((notification) => {
-            return notification.unread === true &&
-                   notification.reason === 'mention' &&
-                   notification.subject.type === 'Issue';
-        });
+    let issueNotifications = notifications.filter((notification) => {
+        return notification.unread === true &&
+               notification.reason === 'mention' &&
+               notification.subject.type === 'Issue';
+    });
 
-        await Promise.all(issueMentions.map((notification) => {
+    if (issueNotifications.length > 0) {
+        let username = (await github.users.get({})).login;
+
+
+        await Promise.all(issueNotifications.map(async (notification) => {
+            let lastRead = moment(notification.last_read_at || "2000-01-01T00:00:00Z");
+
             let issueUrl = notification.subject.url;
             let issueMatch = /api.github.com\/repos\/([\-\w]+)\/([\-\w]+)\/issues\/(\d+)/.exec(issueUrl);
-            if (issueMatch) {
-                let issueUsername = issueMatch[1];
-                let issueRepo = issueMatch[2];
-                let issueId = issueMatch[3];
+            if (!issueMatch) {
+                console.warn("Received issue notification that didn't match regex", issueUrl);
+                return;
+            }
 
+            let repoUser = issueMatch[1];
+            let repoName = issueMatch[2];
+            let issueId = parseInt(issueMatch[3], 10);
+
+            let comments = await github.issues.getComments({
+                user: repoUser,
+                repo: repoName,
+                number: issueId
+            });
+
+            let newMentions = comments.filter((c) =>
+                new RegExp("@"+username+"( |$)").test(c.body) &&
+                moment(c.created_at).isAfter(lastRead)
+            );
+
+            for (let mention of newMentions) {
                 bot.onMention({
+                    user: mention.user.login,
+                    body: mention.body,
+                    created_at: mention.created_at,
+
+                    url: mention.url,
+                    id: mention.id
+                },
+                {
+                    comments: comments,
+
+                    id: issueId,
+                    repo: {
+                        user: repoUser,
+                        name: repoName,
+                    },
                     url: issueUrl
                 }, function respondCallback(response: string) {
                     return github.issues.createComment({
-                        user: issueUsername,
-                        repo: issueRepo,
+                        user: repoUser,
+                        repo: repoName,
                         number: issueId,
                         body: response
                     });

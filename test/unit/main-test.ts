@@ -1,2 +1,0 @@
-it("Runs the tests", () => {
-});
