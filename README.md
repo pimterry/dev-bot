@@ -37,7 +37,7 @@ var devBot = require("dev-bot");
 
 devBot.connectGithub({
     type: "oauth",
-    token: process.env.GITHUB_TOKEN
+    token: process.env.GITHUB_TOKEN // Read secrets from the environment, rather than including them directly
 });
 
 exports.onMention = function (mention, respondCallback) {
@@ -49,16 +49,31 @@ Feel free to @jokebot on an issue on the [jokebot repo](https://github.com/jokeb
 
 First, we do some standard require()ing, then we set up Github with our credentials, and then we provide a handler for mentions. That handler is given the data for the mention, but we don't even need that here, we just use the second argument (a callback you can use to easily reply directly to your mention), and pass it a joke from our joke source. That's the lot.
 
-To actually deploy this, you'll need AWS credentials available, and the DevBot tool installed (`npm install --save-dev dev-bot-tool`). See the tool's [full readme](https://github.com/pimterry/dev-bot-tool/blob/master/README.md) for more information. For a larger project you'll want to create a .env file in your repo (**remember to .gitignore it!**) to hold your AWS credentials, and load them with `source .env` before your commands, but to test this you can just run:
+With that saved as index.js and the DevBot tool installed (`npm install --save-dev dev-bot-tool`), we can run this locally:
 
 ```bash
+export GITHUB_TOKEN=abcdefghijklmnop
+dev-bot run-once index.js
+```
+
+This runs the bot once for testing. It checks for any mentions, reacts to them (i.e. responds with a joke), and then stops.
+
+Note that the above will only work with `dev-bot` in your path. You can install it globally, but typically instead I install it locally in my bots, and run the above from NPM scripts (which automatically include ./node_modules/.bin -- where DevBot puts its CLI client -- in their path). See JokeBot's [package.json](https://github.com/jokebot/jokebot/blob/master/package.json) for an example of this all put together.
+
+To go further you'll want to deploy this. To do so, you'll need AWS credentials available. For a larger project you'll want to create a .env file in your repo (**and remember to .gitignore it!**) to hold your AWS credentials, and load them with `source .env` before your commands. For a quick test though you can just run:
+
+```bash
+# These variables are used now when deploying
 export AWS_ACCESS_KEY_ID=AAAAAAAAAAAAAA
 export AWS_SECRET_ACCESS_KEY=BBBBBBBBBBBBBBBBBBBBBBBBBBBBB
 
-dev-bot aws-deploy --name jokebot index.js
+# The contents of deploy.env are added to the deployed environment.
+# This lets the bot use the github token at runtime.
+echo "GITHUB_TOKEN=CCCCCCCCCCCCCCCC" > deploy.env
+
+dev-bot aws-deploy jokebot index.js --env deploy.env
 ```
 
-Note that the above will only work with `dev-bot` in your path. You can install it globally, but typically instead I install it locally in my bots, and run the above from NPM scripts (which automatically include ./node_modules/bin to their path, where DevBot puts its CLI client). See JokeBot's [package.json](https://github.com/jokebot/jokebot/blob/master/package.json) for an example of this all put together.
 
 That's it! Do whatever you like inside onMention, and see it called every time somebody pings you (with a short delay: see [caveats](#caveats) below).
 
