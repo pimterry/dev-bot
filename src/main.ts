@@ -92,25 +92,28 @@ export async function runBot(bot: DevBotEntryPoint): Promise<void> {
                 moment(c.created_at).isSameOrBefore(notificationReadTime)
             );
 
+            let contextData = {
+                comments: comments,
+
+                id: issueId,
+                repo: {
+                    user: repoUser,
+                    name: repoName,
+                },
+                url: issueUrl
+            };
+
             for (let mention of newMentions) {
-                bot.onMention({
+                let mentionData = {
                     user: mention.user.login,
                     body: mention.body,
                     created_at: mention.created_at,
 
                     url: mention.url,
                     id: mention.id
-                },
-                {
-                    comments: comments,
+                };
 
-                    id: issueId,
-                    repo: {
-                        user: repoUser,
-                        name: repoName,
-                    },
-                    url: issueUrl
-                }, function respondCallback(response: string) {
+                bot.onMention(mentionData, contextData, function respondCallback(response: string) {
                     return github.issues.createComment({
                         user: repoUser,
                         repo: repoName,
