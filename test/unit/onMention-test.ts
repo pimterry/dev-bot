@@ -3,6 +3,11 @@ import devBot = require("../../src/main");
 import expect from "../expect";
 import sinon = require("sinon");
 import nock = require("nock");
+
+// Limit sinon errors to 10 properties max
+var formatter = require("formatio").configure({ quoteStrings: false, limitChildrenCount: 10 });
+sinon.format = formatter.ascii.bind(formatter);
+
 nock.disableNetConnect();
 
 const BOT_NAME = "my-bot"
