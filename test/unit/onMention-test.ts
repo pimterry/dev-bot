@@ -16,16 +16,21 @@ describe("onMention", () => {
         botStub = { onMention: sinon.stub() };
         githubStub = nock('https://api.github.com');
 
-        optionally(githubStub.get('/user').query(true)
-                             .reply(200, { login: BOT_NAME }));
+        optionally(githubStub.get('/user').query(true)).reply(200, { login: BOT_NAME });
+
+        notificationRequest = optionally(githubStub.put('/notifications').query(true));
+        notificationRequest.reply(200);
 
         devBot.connectGithub({type:"oauth", token: "qwe"});
     });
 
+    let notificationRequest: nock.Interceptor;
     let ignoredRequests = [];
 
-    function optionally(request: nock.Scope) {
-        ignoredRequests.push(Object.keys((<any>request).keyedInterceptors)[0]);
+    // TODO: Remove once https://github.com/node-nock/nock/pull/723 has been merged.
+    function optionally(request: any) {
+        ignoredRequests.push(request._key);
+        return request;
     }
 
     afterEach(() => {
@@ -33,6 +38,7 @@ describe("onMention", () => {
                                         .filter((r) => ignoredRequests.indexOf(r) === -1);
 
         expect(pendingRequests).to.deep.equal([]);
+        nock.cleanAll();
     });
 
     it("does nothing if there are no notifications", async () => {
@@ -143,6 +149,38 @@ describe("onMention", () => {
         expect(botStub.onMention).to.not.have.been.calledWithMatch({ user: "old-commenter" });
     });
 
+    it("marks notifications from before the latest notification update as read", async () => {
+        givenNotifications([ newCommentNotification("2016-01-01T01:00:00Z", "2016-01-01T01:30:00Z") ]);
+        givenComments([
+            comment("old-commenter", BOT_MENTION + " hi there", "",     "2000-01-01T00:00:00Z"),
+            comment("new-commenter", BOT_MENTION + " more hellos!", "", "2010-01-01T02:00:00Z")
+        ]);
+
+        // Require the notification mark-as-read non-optionally, with exactly 01:30 (the last notification update time)
+        unmockRequest(notificationRequest);
+        githubStub.put('/notifications', {
+            last_read_at: "2016-01-01T01:30:00Z"
+        }).query(true).reply(200);
+
+        await devBot.runBot(botStub);
+    });
+
+    // TODO: Remove once https://github.com/node-nock/nock/pull/721 is merged
+    function unmockRequest(request: any) {
+        nock.removeInterceptor(request);
+        request.scope.remove(request._key, request);
+    }
+
+    it("doesn't call onMention for mentions after notification update time, to avoid races", async () => {
+        givenNotifications([ newCommentNotification("2016-01-01T01:00:00Z", "2016-01-01T01:30:00Z") ]);
+        givenComments([
+            comment("race-condition", BOT_MENTION + " - after notification", "", "2016-01-01T02:00:00Z")
+        ]);
+        await devBot.runBot(botStub);
+
+        expect(botStub.onMention).to.not.have.been.called;
+    });
+
     it("does nothing if the comment has been deleted since notification", async () => {
         givenNotifications([ newCommentNotification() ]);
         givenComments([ ]);
@@ -163,7 +201,7 @@ describe("onMention", () => {
     }
 });
 
-function notification(type: string, url: string, reason: string, lastRead: string) {
+function notification(type: string, url: string, reason: string, lastRead: string, updatedAt: string) {
     return {
         unread: true,
         reason: reason,
@@ -171,16 +209,18 @@ function notification(type: string, url: string, reason: string, lastRead: strin
             type: type,
             url: url
         },
-        last_read_at: lastRead
+        last_read_at: lastRead,
+        updated_at: updatedAt
     };
 }
 
-function newCommentNotification(lastRead: string = null) {
+function newCommentNotification(lastRead: string = null, updatedAt: string = "2020-01-01T00:00:00Z") {
     return notification(
         "Issue",
         "https://api.github.com/repos/pimterry/dev-bot/issues/4",
         "mention",
-        lastRead
+        lastRead,
+        updatedAt
     );
 }
 

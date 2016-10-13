@@ -48,6 +48,12 @@ export async function runBot(bot: DevBotEntryPoint): Promise<void> {
         participating: true
     });
 
+    // We use the latest notification update as our timestamp for what we mark-as-read
+    let notificationReadTime = moment.max(notifications.map((n) => moment(n.updated_at)));
+    github.activity.markNotificationsAsRead({
+        last_read_at: notificationReadTime.utc().format()
+    }).catch((err) => console.error(err)); // Separately log errors, don't wait for this request.
+
     let issueNotifications = notifications.filter((notification) => {
         return notification.unread === true &&
                notification.reason === 'mention' &&
@@ -56,7 +62,6 @@ export async function runBot(bot: DevBotEntryPoint): Promise<void> {
 
     if (issueNotifications.length > 0) {
         let username = (await github.users.get({})).login;
-
 
         await Promise.all(issueNotifications.map(async (notification) => {
             let lastRead = moment(notification.last_read_at || "2000-01-01T00:00:00Z");
@@ -79,8 +84,12 @@ export async function runBot(bot: DevBotEntryPoint): Promise<void> {
             });
 
             let newMentions = comments.filter((c) =>
+                // Only mentions of this bot
                 new RegExp("@"+username+"( |$)").test(c.body) &&
-                moment(c.created_at).isAfter(lastRead)
+                // That we haven't seen
+                moment(c.created_at).isAfter(lastRead) &&
+                // Where we've seen the notification and marked it as read (so we avoid races)
+                moment(c.created_at).isSameOrBefore(notificationReadTime)
             );
 
             for (let mention of newMentions) {
@@ -112,15 +121,15 @@ export async function runBot(bot: DevBotEntryPoint): Promise<void> {
             }
         }));
 
-        // Think there's a small but possible race condition here, if Github gets a new message between
-        // getNotifications and unsubscribing here on the same thread, but I don't have an easy fix right now.
+        // Unsubscribe, so we don't get non-mention updates to this thread in future.
+        // We'd filter them anyway, but it avoids extra requests if we don't have to.
         await Promise.all(notifications.map((notification) => {
             return github.activity.setNotificationThreadSubscription({
                 id: notification.id,
                 ignored: true
             });
-        }).concat(notifications.map((notification) => {
-            return github.activity.markNotificationThreadAsRead({ id: notification.id });
-        })));
+        }));
+    } else {
+        console.log("No outstanding notifications");
     }
 }

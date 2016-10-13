@@ -45,6 +45,6 @@
   "dependencies": {
     "es6-promisify": "^4.1.0",
     "github": "^3.0.0",
-    "moment": "^2.13.0"
+    "moment": "^2.15.1"
   }
 }
