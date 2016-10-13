@@ -209,6 +209,7 @@ describe("onMention", () => {
         expect(botStub.onMention).not.to.have.been.called;
     });
 
+    // TODO: Refactor our a nice helper for these.
     function givenNotifications(notifications: {}[]) {
         githubStub.get('/notifications').query(true).reply(200, notifications);
     }
@@ -232,6 +233,8 @@ function notification(type: string, url: string, reason: string, lastRead: strin
         updated_at: updatedAt
     };
 }
+
+// TODO: Refactor these to options objects to make their usage clearer
 
 function newCommentNotification(lastRead: string = null, updatedAt: string = "2020-01-01T00:00:00Z") {
     return notification(
