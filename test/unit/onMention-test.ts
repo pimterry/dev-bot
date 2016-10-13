@@ -90,6 +90,20 @@ describe("onMention", () => {
         });
     });
 
+    it("provides a callback to respond to a mention", async () => {
+        givenNotifications([ newCommentNotification() ]);
+        givenComments([ comment("testuser", BOT_MENTION + " hi there") ]);
+
+        await devBot.runBot(botStub);
+
+        let callback = botStub.onMention.args[0][2];
+
+        githubStub.post("/repos/pimterry/dev-bot/issues/4/comments", {
+            "body": "Test message"
+        }).query(true).reply(200);
+        await callback("Test message");
+    });
+
     it("calls onMention with only the comment mentioning you", async () => {
         givenNotifications([ newCommentNotification() ]);
         givenComments([
