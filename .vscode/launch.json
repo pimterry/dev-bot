@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug tests",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "args": ["dist/test/**/*-test.js"],
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "build",
+            "sourceMaps": true,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Process",
+            "port": 5858,
+            "outFiles": [],
+            "sourceMaps": true
+        }
+    ]
+}
