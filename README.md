@@ -80,6 +80,7 @@ That's it! Do whatever you like inside onMention, and see it called every time s
 ## Caveats
 
 * Github's notification API doesn't let you poll more than once a minute, so notification-based events (as opposed to webhooks) aren't instant. On average you're going to wait 30s, which is normally enough for most things, but does mean you'll struggle for conversations that have a lot of back and forth. This doesn't affect events with webhooks support (like pull request creation). I'm interested in ways to improve this though - open an issue here if you have an idea!
+* AWS Lambda comes with [some limitations](http://docs.aws.amazon.com/lambda/latest/dg/limits.html). Your deployment has a 50MB zipped-size limit (which can make using large dependencies difficult, although there's [solutions coming](https://github.com/pimterry/dev-bot/issues/32)), and you have a 5 minute execution time limit. For complex or larger applications, Lambda probably isn't where you should run your code: run on Lambda and trigger a service elsewhere, or get a proper EC2 instance, and run DevBot there by hand.
 
 ## The Future
 
