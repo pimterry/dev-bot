@@ -86,12 +86,12 @@ That's it! Do whatever you like inside onMention, and see it called every time s
 
 ### Planned features
 
-* Web hooks for PRs and issues (#11)
-* Built-in support for examining the code of a PR (#16)
-* Faster message notification (#31)
-* Built-in tools to configure a bot for a new repo (#15)
-* Built-in tools to authenticate @ mentioning users (#34)
-* Yeoman generator for quickly creating new bots (#33)
+* Web hooks for PRs and issues ([#11](https://github.com/pimterry/dev-bot/issues/11))
+* Built-in support for examining the code of a PR ([#16](https://github.com/pimterry/dev-bot/issues/16))
+* Faster message notification ([#31](https://github.com/pimterry/dev-bot/issues/31))
+* Built-in tools to configure a bot for a new repo ([#15](https://github.com/pimterry/dev-bot/issues/15))
+* Built-in tools to authenticate @ mentioning users ([#34](https://github.com/pimterry/dev-bot/issues/34))
+* Yeoman generator for quickly creating new bots ([#33](https://github.com/pimterry/dev-bot/issues/33))
 
 ### Other platforms, languages, and deployment targets.
 
