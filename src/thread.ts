@@ -1,10 +1,10 @@
 import Repo from "./repo";
 
 class Thread {
-    constructor (private _github: any, private _url: string) /* : Promise<Thread> */ {
-        let issueMatch = /api.github.com\/repos\/([\-\w]+)\/([\-\w]+)\/issues\/(\d+)/.exec(_url);
+    constructor (private _github: any, public url: string) /* : Promise<Thread> */ {
+        let issueMatch = /api.github.com\/repos\/([\-\w]+)\/([\-\w]+)\/issues\/(\d+)/.exec(url);
         if (!issueMatch) {
-            throw new Error(`Received issue notification that didn't match regex: ${_url}`);
+            throw new Error(`Received issue notification that didn't match regex: ${url}`);
         }
 
         this.repo = new Repo(issueMatch[1], issueMatch[2]);
