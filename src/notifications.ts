@@ -9,10 +9,10 @@ export default async function getNotifications(github: any) {
 }
 
 class Notifications {
-    constructor(private github: any, private notifications: Array<any>) { }
+    constructor(private _github: any, private _notifications: Array<any>) { }
 
     get withMentions(): Array<any> {
-        return this.notifications.filter((notification) => {
+        return this._notifications.filter((notification) => {
             return notification.unread === true &&
                    notification.reason === 'mention' &&
                    notification.subject.type === 'Issue';
@@ -20,20 +20,20 @@ class Notifications {
     }
 
     get latestUpdateTime(): moment.Moment {
-        let updateTimes = this.notifications.map((n) => moment(n.updated_at));
+        let updateTimes = this._notifications.map((n) => moment(n.updated_at));
         return moment.max(...updateTimes).utc();
     }
 
     markAllAsRead(): Promise<void> {
         // Mark as read all the notification that we are holding.
-        return this.github.activity.markNotificationsAsRead({
+        return this._github.activity.markNotificationsAsRead({
             last_read_at: this.latestUpdateTime.format()
         });
     }
 
     unsubscribeAll(): Promise<{}> {
-        return Promise.all(this.notifications.map((notification) => {
-            return this.github.activity.setNotificationThreadSubscription({
+        return Promise.all(this._notifications.map((notification) => {
+            return this._github.activity.setNotificationThreadSubscription({
                 id: notification.id,
                 ignored: true
             });
