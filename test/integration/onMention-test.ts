@@ -21,9 +21,9 @@ describe("onMention", () => {
         botStub = { onMention: sinon.stub() };
         githubStub = nock('https://api.github.com');
 
-        optionally(githubStub.get('/user').query(true)).reply(200, { login: BOT_NAME });
+        githubStub.get('/user').query(true).optionally().reply(200, { login: BOT_NAME });
 
-        notificationRequest = optionally(githubStub.put('/notifications').query(true));
+        notificationRequest = githubStub.put('/notifications').optionally().query(true);
         notificationRequest.reply(200);
 
         devBot.connectGithub({type:"oauth", token: "qwe"});
@@ -31,12 +31,6 @@ describe("onMention", () => {
 
     let notificationRequest: nock.Interceptor;
     let ignoredRequests = [];
-
-    // TODO: Remove once https://github.com/node-nock/nock/pull/723 has been merged.
-    function optionally(request: any) {
-        ignoredRequests.push(request._key);
-        return request;
-    }
 
     afterEach(() => {
         let pendingRequests = githubStub.pendingMocks()
@@ -176,19 +170,13 @@ describe("onMention", () => {
         ]);
 
         // Require the notification mark-as-read non-optionally, with exactly 01:30 (the last notification update time)
-        unmockRequest(notificationRequest);
+        nock.removeInterceptor(notificationRequest);
         githubStub.put('/notifications', {
             last_read_at: "2016-01-01T01:30:00Z"
         }).query(true).reply(200);
 
         await devBot.runBot(botStub);
     });
-
-    // TODO: Remove once https://github.com/node-nock/nock/pull/721 is merged
-    function unmockRequest(request: any) {
-        nock.removeInterceptor(request);
-        request.scope.remove(request._key, request);
-    }
 
     it("doesn't call onMention for mentions after notification update time, to avoid races", async () => {
         givenNotifications([ newCommentNotification("2016-01-01T01:00:00Z", "2016-01-01T01:30:00Z") ]);
