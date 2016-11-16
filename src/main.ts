@@ -48,7 +48,7 @@ export async function runBot(bot: DevBotEntryPoint): Promise<void> {
 
         let newMentions = thread.comments.filter((c) =>
             // Only mentions of this bot
-            new RegExp("@"+username+"( |$)").test(c.body) &&
+            new RegExp("@"+username+"([^a-zA-Z0-9\-]|$)").test(c.body) &&
             // That we haven't seen
             moment(c.created_at).isAfter(lastRead) &&
             // Where we've seen the notification and marked it as read (so we avoid races)

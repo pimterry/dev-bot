@@ -127,10 +127,17 @@ describe("onMention", () => {
         expect(botStub.onMention).not.to.have.been.called;
     });
 
-
     it("spots mentions without any following text", async () => {
         givenNotifications([ newCommentNotification() ]);
         givenComments([ comment("testuser", BOT_MENTION) ]);
+
+        await devBot.runBot(botStub);
+        expect(botStub.onMention).to.have.been.calledOnce;
+    });
+
+    it("spots mentions with any following punctuation", async () => {
+        givenNotifications([ newCommentNotification() ]);
+        givenComments([ comment("testuser", BOT_MENTION + "?") ]);
 
         await devBot.runBot(botStub);
         expect(botStub.onMention).to.have.been.calledOnce;
