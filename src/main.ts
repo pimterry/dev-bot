@@ -32,11 +32,13 @@ export interface DevBotEntryPoint {
 }
 
 export async function runBot(bot: DevBotEntryPoint): Promise<void> {
+    console.info(`Running dev-bot`);
+
     let notifications = await getNotifications(github);
     notifications.markAllAsRead().catch((e) => console.error(e)); // Log errors, but don't wait for this request.
 
     if (notifications.withMentions.length === 0) {
-        console.log("No outstanding notifications");
+        console.info("No outstanding notifications");
         return;
     }
 
@@ -54,6 +56,7 @@ export async function runBot(bot: DevBotEntryPoint): Promise<void> {
             // Where we've seen the notification and marked it as read (so we avoid races)
             moment(c.created_at).isSameOrBefore(notifications.latestUpdateTime)
         );
+        logMentions(newMentions);
 
         for (let rawMention of newMentions) {
             let mention = {
@@ -72,4 +75,11 @@ export async function runBot(bot: DevBotEntryPoint): Promise<void> {
     // Unsubscribe, so we don't get non-mention updates to this thread in future.
     // We'd filter them anyway, but it avoids extra requests if we don't have to.
     await notifications.unsubscribeAll();
+}
+
+function logMentions(comments: any) {
+    if (comments.length === 0) console.warn(`Notification, but no mentions found for notification`);
+    else {
+        console.info(`Found ${comments.length} mentions:\n${comments.map((c) => c.body + "\n")}`);
+    }
 }
