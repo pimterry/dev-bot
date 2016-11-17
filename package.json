@@ -1,6 +1,6 @@
 {
   "name": "dev-bot",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A framework for building chat-bot-based developer tooling",
   "main": "dist/src/main.js",
   "scripts": {
