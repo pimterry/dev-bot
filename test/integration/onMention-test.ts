@@ -176,10 +176,10 @@ describe("onMention", () => {
             comment("new-commenter", BOT_MENTION + " more hellos!", "", "2010-01-01T02:00:00Z")
         ]);
 
-        // Require the notification mark-as-read non-optionally, with exactly 01:30 (the last notification update time)
+        // Require the notification mark-as-read non-optionally, with 01:30:01 (just after the latest notification update time)
         nock.removeInterceptor(notificationRequest);
         githubStub.put('/notifications', {
-            last_read_at: "2016-01-01T01:30:00Z"
+            last_read_at: "2016-01-01T01:30:01Z"
         }).query(true).reply(200);
 
         await devBot.runBot(botStub);

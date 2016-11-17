@@ -52,7 +52,7 @@ export async function runBot(bot: DevBotEntryPoint): Promise<void> {
             // Only mentions of this bot
             new RegExp("@"+username+"([^a-zA-Z0-9\-]|$)").test(c.body) &&
             // That we haven't seen
-            moment(c.created_at).isAfter(lastRead) &&
+            moment(c.created_at).isSameOrAfter(lastRead) &&
             // Where we've seen the notification and marked it as read (so we avoid races)
             moment(c.created_at).isSameOrBefore(notifications.latestUpdateTime)
         );

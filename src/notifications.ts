@@ -27,7 +27,9 @@ class Notifications {
     markAllAsRead(): Promise<void> {
         // Mark as read all the notification that we are holding.
         return this._github.activity.markNotificationsAsRead({
-            last_read_at: this.latestUpdateTime.format()
+            // Mark all notifications *before* the next tick (all second-based) as read.
+            // This feels like it risks races, but seems to be the best we can do...
+            last_read_at: this.latestUpdateTime.add(1, 'second').format()
         });
     }
 
